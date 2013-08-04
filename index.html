@@ -8,29 +8,121 @@
   </head>
   <body>
     <div class="container"> 
-		<h1> Juego </h1>
+		<h1> Tateti </h1>
 		<hr />
-		<div class ="page"></div>
-	<div>
+		<div class ="page">
+		</div>
+	</div>
+	
+	<script type="text/template" id="nombres-form">
+		<form class = "edit-user-form">
+			<legend>Nombre de los Jugadores</legend>
+			<label>Jugador 1</label> <input type="text" name="jugador1" placeholder= "Player1" />
+			<label>Jugador 2</label> <input type="text" name="jugador2" placeholder= "Player1" />
+			<button type="submit" class = "btn">Empezar!</button>
+		</form>
+	</script>
+	<script type="text/template" id="tateti-table">
+		<button class = "btn-primary" id = "pnom" align="center">Cambiar Nombre de Jugadores</button>
+			<h4>Juega <%= tateti.ganador()%> <%= tateti.simbol(tateti.turno)%></h4>
+		</div>
+		
+			<table align="center">
+				<tbody>
+				<% for(i=0;i<9;i++) {%>
+					<% if(i==0 || i==3 || i ==6){ %>
+					<tr>
+					<% }%>
+						<td class = "table-bordered td">
+							<button class = "btn" id = "<%= i %>" >
+								<%= tateti.simbol(tateti.mat[i])%>
+							</button>
+						</td>
+					<% if(i==2 || i==5 || i ==8){ %>
+						</tr>
+					<% }%>
+				<% }%>
+				</tbody>
+
+			</table>
+			<div class="container" align="center">
+				<% if(tateti.end){ %>
+					<% if(tateti.empate){ %>
+					<h4>Empate!</h4>
+					<% }else{ %>
+					<h4>Gano <%= tateti.ganador()%>!</h4>
+					<% }%>
+					<button class = "btn-primary" id = "nuevo" align="center">Nuevo Juego</button>
+				<% }%>
+
+			</div>
+		</div>
+	</script>
     <!-- JavaScript plugins (requires jQuery) -->
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/backbone.js"></script>
+    <script src="http://underscorejs.org/underscore-min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/backbone.js"></script>
     <script src="js/tateti.js"></script>
     <script>
-        var Router = backbone.Router.extend({
+    	var tateti = new Tabla();
+
+        var Router = Backbone.Router.extend({
           routes: {
-            '':'home'
+            '':'home',
+            'nombre': 'nombres'
           }
 
         });
         var router = new Router();
+        var TablaTateti = Backbone.View.extend({
+    		el: '.page',
+    		render: function(){
+    			var temp = _.template($("#tateti-table").html(), tateti);
+    			this.$el.html(temp);
+    		},
+    		events: {
+    			'click button' : 'jugar',
+    			'submit .edit-user-form' : 'nom'
+    		},
+    		jugar: function(ev){
+    			x = ev.currentTarget.attributes.id.nodeValue;
+    			if(x=='nuevo'){
+    				tateti.init();
+    			}else{
+    				tateti.jugar(x);
+    			}
+    			this.render();
+    		},
+    		nom: function(){
+    			console.log("push");
+    			router.navigate('nombre',{trigger: true});
+    		}
+
+    	});
+    	var NombreP = Backbone.View.extend({
+    		el: '.page',
+    		render: function(){
+    			var temp = _.template($("#nombre-form").html(), tateti);
+    			this.$el.html(temp);
+    		}
+
+    	});
+        var tablat = new TablaTateti();
+        var nombrep = new NombreP();
         router.on('route:home',function(){
           console.log("We have loaded the home page.");
+          tablat.render();
         });
-        backbone.history.start();
 
-    </script>
+        router.on('route:nombres',function(){
+          console.log("We have loaded the nombres page.");
+          nombrep.render();
+        });
+        Backbone.history.start();
+
+
+    </script> 
   </body>
 </html>
