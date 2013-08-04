@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="container"> 
+		<h1> Juego </h1>
+		<hr />
+		<div class ="page"></div>
+	<div>
+    <!-- JavaScript plugins (requires jQuery) -->
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/backbone.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/tateti.js"></script>
+    <script>
+        var Router = backbone.Router.extend({
+          routes: {
+            '':'home'
+          }
+
+        });
+        var router = new Router();
+        router.on('route:home',function(){
+          console.log("We have loaded the home page.");
+        });
+        backbone.history.start();
+
+    </script>
+  </body>
+</html>
