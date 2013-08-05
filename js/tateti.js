@@ -1,6 +1,6 @@
 function Tabla(){
-	this.p1="P1";
-	this.p2="P2";
+	this.p1="Jugador 1";
+	this.p2="Jugador 2";
 	this.turno=true;
 	this.end = false;
 	this.empate = true;

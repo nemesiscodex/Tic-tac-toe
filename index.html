@@ -17,13 +17,13 @@
 	<script type="text/template" id="nombres-form">
 		<form class = "edit-user-form">
 			<legend>Nombre de los Jugadores</legend>
-			<label>Jugador 1</label> <input type="text" name="jugador1" placeholder= "Player1" />
-			<label>Jugador 2</label> <input type="text" name="jugador2" placeholder= "Player1" />
-			<button type="submit" class = "btn">Empezar!</button>
+			<label>Jugador 1</label> <input type="text" name="jugador1" placeholder= "Jugador 1" />
+			<label>Jugador 2</label> <input type="text" name="jugador2" placeholder= "Jugador 2" />
+			<button type="submit" class = "btn nomBtn">Empezar!</button>
 		</form>
 	</script>
 	<script type="text/template" id="tateti-table">
-		<button class = "btn-primary" id = "pnom" align="center">Cambiar Nombre de Jugadores</button>
+		<button class = "btn-primary nombre" id = "pnom" align="center">Cambiar Nombre de Jugadores</button>
 			<h4>Juega <%= tateti.ganador()%> <%= tateti.simbol(tateti.turno)%></h4>
 		</div>
 		
@@ -34,7 +34,7 @@
 					<tr>
 					<% }%>
 						<td class = "table-bordered td">
-							<button class = "btn" id = "<%= i %>" >
+							<button class = "btn tt" id = "<%= i %>" name="test">
 								<%= tateti.simbol(tateti.mat[i])%>
 							</button>
 						</td>
@@ -52,7 +52,7 @@
 					<% }else{ %>
 					<h4>Gano <%= tateti.ganador()%>!</h4>
 					<% }%>
-					<button class = "btn-primary" id = "nuevo" align="center">Nuevo Juego</button>
+					<button class = "btn-primary nuevo" id = "nuevo" align="center">Nuevo Juego</button>
 				<% }%>
 
 			</div>
@@ -66,8 +66,26 @@
     <script src="js/backbone.js"></script>
     <script src="js/tateti.js"></script>
     <script>
-    	var tateti = new Tabla();
+    	<!-- Funcion Magica -->
+    	$.fn.serializeObject = function(){
+    		var o = {};
+    		var a =  this.serializeArray();
+    		$.each(a,function(){
+    			if(o[this.name] !== undefined){
+	    			if(!o[this.name].push){
+	    				o[this.name] = [o[this.name]];
+	    			}
+	    			o[this.name].push(this.value || '');
+	    		}else{
+	    			o[this.name] = this.value || '';
+	    		}
 
+    		});
+    		return o;
+    	}
+    	<!-- Fin de funcion Magica -->
+
+    	var tateti = new Tabla();
         var Router = Backbone.Router.extend({
           routes: {
             '':'home',
@@ -83,20 +101,20 @@
     			this.$el.html(temp);
     		},
     		events: {
-    			'click button' : 'jugar',
-    			'submit .edit-user-form' : 'nom'
+    			'click .btn.tt' : 'jugar',
+    			'click .btn-primary.nuevo' : 'nuevo',
+    			'click .btn-primary.nombre' : 'nom'
     		},
     		jugar: function(ev){
     			x = ev.currentTarget.attributes.id.nodeValue;
-    			if(x=='nuevo'){
-    				tateti.init();
-    			}else{
-    				tateti.jugar(x);
-    			}
+    			tateti.jugar(x);
     			this.render();
     		},
-    		nom: function(){
-    			console.log("push");
+    		nuevo: function(ev){
+    			tateti.init();
+    			this.render();
+    		},
+    		nom: function(ev){
     			router.navigate('nombre',{trigger: true});
     		}
 
@@ -104,11 +122,23 @@
     	var NombreP = Backbone.View.extend({
     		el: '.page',
     		render: function(){
-    			var temp = _.template($("#nombre-form").html(), tateti);
+    			var temp = _.template($("#nombres-form").html(), tateti);
     			this.$el.html(temp);
+    		},
+    		events: {
+    			'submit .edit-user-form': 'CambiarNombre'
+    		},
+    		CambiarNombre: function(ev){
+    			obj = $(ev.currentTarget).serializeObject();
+    			tateti.p1 = obj.jugador1;
+    			tateti.p2 = obj.jugador2;
+    			console.log(tateti);
+    			router.navigate('',{trigger: true});
+    			return false;
     		}
 
     	});
+    	console.log(tateti);
         var tablat = new TablaTateti();
         var nombrep = new NombreP();
         router.on('route:home',function(){
