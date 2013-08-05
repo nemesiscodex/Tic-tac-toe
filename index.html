@@ -13,7 +13,8 @@
 		<div class ="page">
 		</div>
 	</div>
-	
+	<!-- Templates -->
+	<!-- Formulario para cambiar el nombre -->
 	<script type="text/template" id="nombres-form">
 		<form class = "edit-user-form">
 			<legend>Nombre de los Jugadores</legend>
@@ -22,6 +23,7 @@
 			<button type="submit" class = "btn nomBtn">Empezar!</button>
 		</form>
 	</script>
+	<!-- Tabla Tateti -->
 	<script type="text/template" id="tateti-table">
 		<button class = "btn-primary nombre" id = "pnom" align="center">Cambiar Nombre de Jugadores</button>
 			<h4>Juega <%= tateti.ganador()%> <%= tateti.simbol(tateti.turno)%></h4>
@@ -58,13 +60,17 @@
 			</div>
 		</div>
 	</script>
+
     <!-- JavaScript plugins (requires jQuery) -->
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="http://underscorejs.org/underscore-min.js"></script>
+    <!-- Bootstrap, Backbone, y el backend de tateti -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/backbone.js"></script>
     <script src="js/tateti.js"></script>
+
+    <!-- Funcionalidad -->
     <script>
     	<!-- Funcion Magica -->
     	$.fn.serializeObject = function(){
@@ -86,6 +92,7 @@
     	<!-- Fin de funcion Magica -->
 
     	var tateti = new Tabla();
+    	<!-- Routes ( en este caso home y otra para los nombres ) -->
         var Router = Backbone.Router.extend({
           routes: {
             '':'home',
@@ -94,6 +101,8 @@
 
         });
         var router = new Router();
+        <!-- Vistas -->
+        <!-- Juego de tateti -->
         var TablaTateti = Backbone.View.extend({
     		el: '.page',
     		render: function(){
@@ -119,6 +128,7 @@
     		}
 
     	});
+    	<!-- Cambio de Nombre -->
     	var NombreP = Backbone.View.extend({
     		el: '.page',
     		render: function(){
@@ -132,22 +142,19 @@
     			obj = $(ev.currentTarget).serializeObject();
     			tateti.p1 = obj.jugador1;
     			tateti.p2 = obj.jugador2;
-    			console.log(tateti);
     			router.navigate('',{trigger: true});
     			return false;
     		}
 
     	});
-    	console.log(tateti);
         var tablat = new TablaTateti();
         var nombrep = new NombreP();
+        <!-- Carga las paginas -->
         router.on('route:home',function(){
-          console.log("We have loaded the home page.");
           tablat.render();
         });
 
         router.on('route:nombres',function(){
-          console.log("We have loaded the nombres page.");
           nombrep.render();
         });
         Backbone.history.start();

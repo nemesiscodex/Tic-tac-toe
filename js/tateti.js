@@ -1,3 +1,4 @@
+<!-- Backend del tateti -->
 function Tabla(){
 	this.p1="Jugador 1";
 	this.p2="Jugador 2";
